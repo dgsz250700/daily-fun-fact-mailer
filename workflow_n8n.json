@@ -1,0 +1,231 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -304,
+        16
+      ],
+      "id": "62863285-e9a6-41ab-820b-db600254554d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "martgarcia1010@gmail.com",
+        "subject": "=Reporte diario  {{ $('Schedule Trigger').item.json['Readable date'] }}",
+        "message": "={{ $json.output[0].content[0].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        32
+      ],
+      "id": "de81796c-138c-4a16-a5db-27e9608e0825",
+      "name": "Send a message",
+      "webhookId": "70664e35-24a4-4e11-84ea-f0fecd98b838",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ohjAWWFochwCfFmW",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        208
+      ],
+      "id": "f16e8c91-2c24-4261-8336-88f08360b1f9",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Cda33UoJvoa4YuLI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Give a fun fact from an animal using Wikipedia",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -64,
+        16
+      ],
+      "id": "8ebd4ee9-b9e3-4e8c-8b42-7d51c77d1dc3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        384,
+        208
+      ],
+      "id": "99f3f914-4328-4d60-aa17-c244df627704",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        272,
+        16
+      ],
+      "id": "2f7a79d4-ecea-4c1c-85ca-b57e9ff2f150",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Beautify the HTML below using inline CSS for an email. Format like a modern newsletter. Output only the results in spanish without any header. "
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        32
+      ],
+      "id": "94df1313-c9c2-44a0-bc46-937285563958",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Cda33UoJvoa4YuLI",
+          "name": "OpenAi account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ffaa47d7-6c84-45d1-89c2-0099fd99fe11",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1313f0d7c99f885ab97b3d4a6ad3b87e991cce2ca628bb029b00a6ae83587078"
+  },
+  "id": "zijPk3CrpqWBsIrp",
+  "tags": []
+}
