@@ -1,0 +1,395 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -512,
+        16
+      ],
+      "id": "62863285-e9a6-41ab-820b-db600254554d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "martgarcia1010@gmail.com",
+        "subject": "=Reporte diario  {{ $('Schedule Trigger').item.json['Readable date'] }}",
+        "message": "={{ $json.output[0].content[0].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        32
+      ],
+      "id": "de81796c-138c-4a16-a5db-27e9608e0825",
+      "name": "Send a message",
+      "webhookId": "70664e35-24a4-4e11-84ea-f0fecd98b838",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ohjAWWFochwCfFmW",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -272,
+        192
+      ],
+      "id": "f16e8c91-2c24-4261-8336-88f08360b1f9",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Cda33UoJvoa4YuLI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Usa tus herramientas disponibles para buscar:\n1. Los precios más recientes de las acciones EC y BIC\n2. Las noticias más recientes relacionadas con esos tickers\n\nLuego genera el reporte financiero completo siguiendo \nlas instrucciones del sistema.\n\nTu tarea es generar un reporte financiero diario en español con esta estructura exacta:\n\n---\n📊 RESUMEN DEL DÍA\n\n**Fecha:** [fecha de hoy]\n\n**Acciones analizadas:**\n- [Ticker]: $[precio cierre] | Variación: [+/-X.XX%] | Tendencia: [▲ sube / ▼ baja / ➡ estable]\n\n**Noticias relevantes:**\n- [Título resumido de la noticia más importante] — [1 línea de contexto]\n- [Segunda noticia si existe]\n\n**Análisis general:**\n[2-3 oraciones explicando qué pasó hoy en el mercado con estas acciones, en lenguaje simple y directo, sin tecnicismos innecesarios]\n\n**Señal de alerta:**\n- Si alguna acción cayó más del 3%: escribe exactamente la palabra ALERTA seguida del ticker y el porcentaje. Ejemplo: ALERTA EC -4.2%\n- Si ninguna cayó más del 3%: escribe exactamente: SIN_ALERTA\n\n---\n\nReglas importantes:\n- Responde SIEMPRE en español\n- Sé conciso, máximo 250 palabras en total\n- No inventes datos que no estén en el input\n- Si no hay datos de alguna acción, indícalo claramente",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -272,
+        16
+      ],
+      "id": "8ebd4ee9-b9e3-4e8c-8b42-7d51c77d1dc3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        288,
+        32
+      ],
+      "id": "2f7a79d4-ecea-4c1c-85ca-b57e9ff2f150",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Beautify the HTML below using inline CSS for an email. Format like a modern newsletter. Output only the results in spanish without any header. "
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        432,
+        32
+      ],
+      "id": "94df1313-c9c2-44a0-bc46-937285563958",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Cda33UoJvoa4YuLI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.alphavantage.co/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "actionNetworkApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "function",
+              "value": "TIME_SERIES_DAILY"
+            },
+            {
+              "name": "symbol",
+              "value": "EC"
+            },
+            {
+              "name": "outputsize",
+              "value": "compact"
+            },
+            {
+              "name": "apikey",
+              "value": "H2WHC4A5ZF548ZXC"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        -144,
+        320
+      ],
+      "id": "f862fe77-6925-4b13-8e55-4fca13accddd",
+      "name": "HTTP Request",
+      "credentials": {
+        "actionNetworkApi": {
+          "id": "jTHG1o9hBUzBaF5n",
+          "name": "Action Network account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.marketaux.com/",
+        "authentication": "genericCredentialType",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbols",
+              "value": "EC,CIB"
+            },
+            {
+              "name": "language",
+              "value": "es"
+            },
+            {
+              "name": "limit",
+              "value": "5"
+            },
+            {
+              "name": "filter_entities",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        96,
+        272
+      ],
+      "id": "6b60b2df-3815-4444-9229-a1e1d5f7f267",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6893b102-25a0-4b86-94a0-28e9032f9252",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "ALERTA",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        16
+      ],
+      "id": "cbf612b0-339a-4f1f-924f-9901d0e4463e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0c363652-b277-4b1c-b294-c0ee2e5fd6a2",
+              "name": "asunto",
+              "value": "⚠️ ALERTA — Caída fuerte en tus acciones hoy",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -80
+      ],
+      "id": "06232f6c-59e7-49dc-932e-0c850521e982",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e80314a1-4aef-4831-86da-b4d4933acd08",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1313f0d7c99f885ab97b3d4a6ad3b87e991cce2ca628bb029b00a6ae83587078"
+  },
+  "id": "zijPk3CrpqWBsIrp",
+  "tags": []
+}
