@@ -1,28 +1,31 @@
-## Daily fun fact emailer
+# Daily Report Emailer
 
-Automated daily animal fact email workflow built with n8n, OpenAI, and Gmail. API from Alpha Vantage and Markeataux.
+An automated email workflow built with n8n, OpenAI, Gmail, and financial data APIs.
 
-## What it does
-This project sends a daily report on finance by email using an n8n workflow.
+## Overview
+This project sends a daily finance report by email. It uses an n8n workflow to fetch financial information, process or summarize it with OpenAI, and deliver the final report through Gmail.
 
 ## Workflow
-Schedule Trigger → AI Agent / OpenAI → Gmail
+Schedule Trigger → Financial Data API → OpenAI → Gmail
 
-## Stack
+## Tech Stack
 - n8n
 - OpenAI
 - Gmail
+- Alpha Vantage
+- Marketaux
 
-## Files
-- `workflows/animal-fact-agent.json`: exported n8n workflow
-- `README.md`: project overview
-- `.gitignore`: ignored files configuration
+## Project Files
+- `workflow 1.2.json` – exported n8n workflow
+- `README.md` – project documentation
+- `.gitignore` – ignored files configuration
 
 ## Setup
 1. Import the workflow JSON into n8n.
-2. Add your OpenAI credentials.
-3. Add your Gmail credentials.
-4. Activate the workflow.
+2. Configure your OpenAI credentials.
+3. Configure your Gmail credentials.
+4. Add the required API credentials for the financial data source.
+5. Enable the workflow.
 
-## Notes
-This repository does not include credentials, API keys, or private configuration values.
+## Security
+No credentials, API keys, or private configuration values are included in this repository.
