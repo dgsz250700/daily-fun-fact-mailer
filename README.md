@@ -1,9 +1,9 @@
 ## Daily fun fact emailer
 
-Automated daily animal fact email workflow built with n8n, OpenAI, and Gmail.
+Automated daily animal fact email workflow built with n8n, OpenAI, and Gmail. API from Alpha Vantage and Markeataux.
 
 ## What it does
-This project sends a daily animal fun fact by email using an n8n workflow.
+This project sends a daily report on finance by email using an n8n workflow.
 
 ## Workflow
 Schedule Trigger → AI Agent / OpenAI → Gmail
