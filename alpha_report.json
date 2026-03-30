@@ -72,7 +72,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "Usa tus herramientas disponibles para buscar:\n1. Los precios más recientes de las acciones EC y BIC\n2. Las noticias más recientes relacionadas con esos tickers\n\nLuego genera el reporte financiero completo siguiendo \nlas instrucciones del sistema.\n\nTu tarea es generar un reporte financiero diario en español con esta estructura exacta:\n\n---\n📊 RESUMEN DEL DÍA\n\n**Fecha:** [fecha de hoy]\n\n**Acciones analizadas:**\n- [Ticker]: $[precio cierre] | Variación: [+/-X.XX%] | Tendencia: [▲ sube / ▼ baja / ➡ estable]\n\n**Noticias relevantes:**\n- [Título resumido de la noticia más importante] — [1 línea de contexto]\n- [Segunda noticia si existe]\n\n**Análisis general:**\n[2-3 oraciones explicando qué pasó hoy en el mercado con estas acciones, en lenguaje simple y directo, sin tecnicismos innecesarios]\n\n**Señal de alerta:**\n- Si alguna acción cayó más del 3%: escribe exactamente la palabra ALERTA seguida del ticker y el porcentaje. Ejemplo: ALERTA EC -4.2%\n- Si ninguna cayó más del 3%: escribe exactamente: SIN_ALERTA\n\n---\n\nReglas importantes:\n- Responde SIEMPRE en español\n- Sé conciso, máximo 250 palabras en total\n- No inventes datos que no estén en el input\n- Si no hay datos de alguna acción, indícalo claramente",
+        "text": "Usa tus herramientas disponibles para buscar:\n1. Los precios más recientes de las acciones EC y BIC\n2. Las noticias más recientes relacionadas con esos tickers\n\nLuego genera el reporte financiero completo siguiendo \nlas instrucciones del sistema.\n\nTu tarea es generar un reporte financiero diario en español con esta estructura exacta:\n\n---\n📊 RESUMEN DEL DÍA\n\n**Fecha:** [fecha de hoy]\n\n**Acciones analizadas:**\n- [Ticker]: $[precio cierre] | Variación: [+/-X.XX%] | Tendencia: [▲ sube / ▼ baja / ➡ estable]\n\n**Noticias relevantes:**\n- [Título resumido de la noticia más importante] — [1 línea de contexto]\n- [Segunda noticia si existe]\n\n**Análisis general:**\n[2-3 oraciones explicando qué pasó hoy en el mercado con estas acciones, en lenguaje simple y directo, sin tecnicismos innecesarios]\n\n**Señal de alerta:**\n- Si alguna acción cayó más del 3%: escribe exactamente la palabra ALERTA EC seguida del ticker y el porcentaje. Ejemplo: ALERTA EC -4.2%\n- Si ninguna cayó más del 3%: escribe exactamente: SIN_ALERTA\n\n---\n\nReglas importantes:\n- Responde SIEMPRE en español\n- Sé conciso, máximo 250 palabras en total\n- No inventes datos que no estén en el input\n- Si no hay datos de alguna acción, indícalo claramente",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -138,7 +138,7 @@
     },
     {
       "parameters": {
-        "url": "https://www.alphavantage.co/",
+        "url": "https://www.alphavantage.co/query",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "actionNetworkApi",
         "sendQuery": true,
@@ -181,26 +181,13 @@
     },
     {
       "parameters": {
-        "url": "https://www.marketaux.com/",
-        "authentication": "genericCredentialType",
+        "url": "https://api.marketaux.com/v1/news/all",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
             {
-              "name": "symbols",
-              "value": "EC,CIB"
-            },
-            {
-              "name": "language",
-              "value": "es"
-            },
-            {
-              "name": "limit",
-              "value": "5"
-            },
-            {
-              "name": "filter_entities",
-              "value": "true"
+              "name": "api_token",
+              "value": "sqBd94OkVTvDHWtjkNuCBn12gQB39lgrfdB5Z4gP"
             }
           ]
         },
@@ -228,7 +215,7 @@
             {
               "id": "6893b102-25a0-4b86-94a0-28e9032f9252",
               "leftValue": "={{ $json.output }}",
-              "rightValue": "ALERTA",
+              "rightValue": "ALERTA EC",
               "operator": {
                 "type": "string",
                 "operation": "contains"
@@ -255,7 +242,7 @@
             {
               "id": "0c363652-b277-4b1c-b294-c0ee2e5fd6a2",
               "name": "asunto",
-              "value": "⚠️ ALERTA — Caída fuerte en tus acciones hoy",
+              "value": "⚠️ ALERTA EC — Caída fuerte en tus acciones hoy",
               "type": "string"
             }
           ]
@@ -385,7 +372,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "e80314a1-4aef-4831-86da-b4d4933acd08",
+  "versionId": "01750791-740a-4801-a347-028ab3d5d2a2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1313f0d7c99f885ab97b3d4a6ad3b87e991cce2ca628bb029b00a6ae83587078"
